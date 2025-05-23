@@ -1,52 +1,40 @@
-import os
 import sqlite3
 
-# Check if 0-databaseconnection.py exists and is not empty
-file_path = "0-databaseconnection.py"
-if not os.path.exists(file_path):
-    print(f"Error: {file_path} does not exist")
-elif os.path.getsize(file_path) == 0:
-    print(f"Error: {file_path} is empty")
-else:
-    print(f"{file_path} exists and is not empty")
-
-# Define DatabaseConnection context manager
 class DatabaseConnection:
+    """Custom context manager for database connection using SQLite"""
+
     def __enter__(self):
-        try:
-            self.conn = sqlite3.connect('users.db')
-            self.cursor = self.conn.cursor()
-            # Ensure users table exists
-            self.cursor.execute('''CREATE TABLE IF NOT EXISTS users 
-                                (id INTEGER PRIMARY KEY, name TEXT, email TEXT)''')
-            self.conn.commit()
-            return self.cursor
-        except sqlite3.Error as e:
-            print(f"Database connection error: {e}")
-            raise
+        self.conn = sqlite3.connect("my_database.db")
+        self.cursor = self.conn.cursor()
+        return self.cursor
 
     def __exit__(self, exc_type, exc_value, traceback):
-        try:
-            if hasattr(self, 'conn'):
-                self.conn.commit()
-                self.cursor.close()
-                self.conn.close()
-        except sqlite3.Error as e:
-            print(f"Error closing database: {e}")
-            raise
+        self.conn.commit()
+        self.conn.close()
 
-# Using context manager to perform query
-try:
-    with DatabaseConnection() as cursor:
-        cursor.execute("SELECT * FROM users")
-        results = cursor.fetchall()
-        if results:
-            print("\nQuery Results:")
-            for row in results:
-                print(row)
-        else:
-            print("\nNo records found in users table")
-except sqlite3.Error as e:
-    print(f"Database error: {e}")
-except Exception as e:
-    print(f"General error: {e}")
+# Example usage
+if __name__ == "__main__":
+    # Optional setup to create the table and add some test users
+    with sqlite3.connect("my_database.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL
+            );
+        """)
+        # Insert users only if table is empty
+        cursor.execute("SELECT COUNT(*) FROM users;")
+        if cursor.fetchone()[0] == 0:
+            cursor.executemany("INSERT INTO users (name) VALUES (?)", [
+                ('Alice',), ('Bob',), ('Charlie',)
+            ])
+        conn.commit()
+
+    # Use context manager to query users
+    with DatabaseConnection() as db:
+        db.execute("SELECT * FROM users")
+        results = db.fetchall()
+        for row in results:
+            print(row)
+
