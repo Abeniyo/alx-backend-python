@@ -1,19 +1,26 @@
-def with_db_connection(func):
+import sqlite3
+import functools
+import logging
+
+# Configure logging to output to console
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def log_queries(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        conn = sqlite3.connect('users.db')
-        try:
-            return func(conn, *args, **kwargs)
-        finally:
-            conn.close()
+        query = args[0] if args else kwargs.get('query', 'Unknown query')
+        logging.info(f"Executing query: {query}")
+        return func(*args, **kwargs)
     return wrapper
 
-@with_db_connection
-def get_user_by_id(conn, user_id):
+@log_queries
+def fetch_all_users(query):
+    conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
-    return cursor.fetchone()
-
-user = get_user_by_id(user_id=1)
-print(user)
-
+    cursor.execute(query)
+    results = cursor.fetchall()
+    conn.close()
+    return results
+if __name__ == "__main__":
+    users = fetch_all_users(query="SELECT * FROM users")
+    print(users)
