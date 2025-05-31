@@ -1,6 +1,6 @@
-from rest_framework import viewsets, status, filters
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, status, filters # type: ignore
+from rest_framework.response import Response # type: ignore
+from rest_framework.permissions import IsAuthenticated # type: ignore
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 
