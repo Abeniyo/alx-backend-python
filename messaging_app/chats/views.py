@@ -32,12 +32,18 @@ class MessageViewSet(viewsets.ModelViewSet):
     filterset_class = MessageFilter
     ordering_fields = ['sent_at']
 
+    def get_queryset(self):
+        conversation_id = self.request.query_params.get('conversation_id')  # <-- required
+        if conversation_id:
+            return Message.objects.filter(conversation_id=conversation_id)  # <-- required
+        return Message.objects.all()
+
     def perform_create(self, serializer):
         conversation = serializer.validated_data['conversation']
         if self.request.user not in conversation.participants.all():
             return Response(
                 {"detail": "You are not a participant of this conversation."},
-                status=HTTP_403_FORBIDDEN  # USE IT DIRECTLY
+                status=HTTP_403_FORBIDDEN
             )
         serializer.save(sender=self.request.user)
 
