@@ -10,9 +10,17 @@ CHATS_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_FILE = os.path.join(CHATS_DIR, 'requests.log')
 
 # Rotate old log if it exists and is not empty
-if os.path.exists(LOG_FILE) and os.path.getsize(LOG_FILE) > 0:
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    os.rename(LOG_FILE, os.path.join(CHATS_DIR, f'requests_{timestamp}.log'))
+#if os.path.exists(LOG_FILE) and os.path.getsize(LOG_FILE) > 0:
+#    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+#    os.rename(LOG_FILE, os.path.join(CHATS_DIR, f'requests_{timestamp}.log'))
+if os.path.exists(LOG_FILE):
+    if os.path.getsize(LOG_FILE) > 0:  # Rotate non-empty logs
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        os.rename(LOG_FILE, os.path.join(CHATS_DIR, f'requests_{timestamp}.log'))
+    else:  # Delete empty logs
+        os.remove(LOG_FILE)
+
+
 
 # Ensure directory exists
 os.makedirs(CHATS_DIR, exist_ok=True)
