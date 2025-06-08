@@ -11,6 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 
 
+
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
@@ -23,15 +24,18 @@ class ConversationViewSet(viewsets.ModelViewSet):
         conversation.participants.add(self.request.user)
 
 class MessageViewSet(viewsets.ModelViewSet):
-    pagination_class = MessagePagination
-    filter_backends = [DjangoFilterBackend]
-    filterset_class = MessageFilter
-
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated, IsParticipantOfConversation]
-#    filter_backends = [filters.OrderingFilter]
+    pagination_class = MessagePagination
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = MessageFilter
     ordering_fields = ['sent_at']
 
     def perform_create(self, serializer):
+        conversation = serializer.validated_data['conversation']
+        if self.request.user not in conversation.participants.all():
+            return Response({"detail": "You are not a participant of this conversation."},
+                            status=status.HTTP_403_FORBIDDEN)
         serializer.save(sender=self.request.user)
+
