@@ -1,0 +1,6 @@
+2025-06-08 08:24:02 - ===== NEW LOG SESSION STARTED =====
+2025-06-08 08:24:02 - Timestamp - User - Path - Method - IP Address
+2025-06-08 08:24:22 - User: Anonymous - Path: /admin/ - Method: GET - IP: 127.0.0.1
+2025-06-08 08:24:23 - User: Anonymous - Path: /admin/login/ - Method: GET - IP: 127.0.0.1
+2025-06-08 08:24:24 - User: Anonymous - Path: /favicon.ico - Method: GET - IP: 127.0.0.1
+2025-06-08 08:24:24 - Not Found: /favicon.ico
