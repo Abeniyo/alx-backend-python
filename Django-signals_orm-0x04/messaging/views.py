@@ -60,3 +60,8 @@ def delete_user(request):
 def inbox(request):
     messages_list = Message.objects.filter(receiver=request.user).select_related('sender').only('content', 'timestamp')
     return render(request, 'inbox.html', {'messages': messages_list})
+
+@login_required
+def unread_inbox(request):
+    unread_msgs = Message.unread.unread_for_user(request.user)
+    return render(request, 'inbox.html', {'messages': unread_msgs})
