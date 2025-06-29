@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Deploy both blue and green versions
+kubectl apply -f blue_deployment.yaml
+kubectl apply -f green_deployment.yaml
+kubectl apply -f kubeservice.yaml
+
+# View logs from green version
+kubectl get pods -l version=green -o name | xargs -I {} kubectl logs {}
