@@ -1,0 +1,12 @@
+#!/bin/bash
+# Scale to 3 replicas
+kubectl scale deployment messaging-app-deployment --replicas=3
+
+# Verify pods
+kubectl get pods
+
+# Load testing using wrk (assuming Django has a /health endpoint)
+wrk -t4 -c100 -d30s http://localhost:8000/health/
+
+# Monitor resource usage (requires metrics-server)
+kubectl top pods
