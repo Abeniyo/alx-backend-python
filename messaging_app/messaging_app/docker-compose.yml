@@ -20,7 +20,7 @@ services:
   web:
     build: .
     container_name: messaging_app_web
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
