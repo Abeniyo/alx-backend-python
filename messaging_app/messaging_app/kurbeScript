@@ -1,0 +1,7 @@
+#!/bin/bash
+# Start Minikube
+minikube start
+
+# Check that Kubernetes cluster is running
+kubectl cluster-info
+kubectl get pods --all-namespaces
