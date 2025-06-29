@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: messaging-app
-          image: your-dockerhub-username/messaging-app:1.0
+          image: Abeniyo/messaging-app:1.0
           ports:
             - containerPort: 8000
