@@ -1,0 +1,17 @@
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8 messaging_app
+          
+      - name: Run tests with coverage
+        run: |
+          pip install coverage
+          coverage run manage.py test
+          coverage report
+          coverage xml
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
